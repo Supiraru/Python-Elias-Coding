@@ -1,14 +1,21 @@
 def characterDivider(text):
     characterSet = ''.join(dict.fromkeys(text))
+    # print(characterSet)
     characterDict = []
 
     for x in characterSet:
         tmpdict = {}
-        tmpdict['character'] = x
-        tmpdict['probability'] = text.count(x)/len(text)
-        tmpdict['frequence'] = text.count(x) 
-        characterDict.append(tmpdict)
+        if x == '\n':
+            tmpdict['character'] = '\\n'
+            tmpdict['probability'] = text.count(x)/len(text)
+            tmpdict['frequence'] = text.count(x) 
 
+        else :
+            tmpdict['character'] = x
+            tmpdict['probability'] = text.count(x)/len(text)
+            tmpdict['frequence'] = text.count(x) 
+        characterDict.append(tmpdict)
+    # print(characterDict)
     return characterDict
 
 def compressMethod(characterDictionary, text):
@@ -20,10 +27,11 @@ def compressMethod(characterDictionary, text):
         tmp_lower = lower
         for x in characterDictionary:
             tmp_upper = tmp_lower + r * x['probability']
+            # print("tabel pada huruf", i, "dengan per-huruf", x['character'], "batas bawah", lower, "batas atas", upper)
             if x['character'] == i:
                 upper = tmp_upper
                 lower = tmp_lower
-                print("huruf", i, "batas bawah", lower, "batas atas", upper)
+                # print("huruf", i, "batas bawah", lower, "batas atas", upper)
                 break
             tmp_lower = tmp_upper
         upper = tmp_upper
@@ -40,7 +48,6 @@ def extractMethod(code, length, characterDictionary):
 
     Counter = 0
     for i in range(length):
-        print(Counter)
         Counter+=1
         r = upper - lower
         tmp_lower = lower
@@ -61,7 +68,19 @@ def extractMethod(code, length, characterDictionary):
 
 def readFileText(fileText):
     openFile = open(fileText, "r+")
-    text = openFile.read()
+    lines = openFile.readlines()
+    raw_text = ''
+    for line in lines:
+        raw_text+=line
+    texts = raw_text.splitlines()
+    text = ''
+    counter = 0
+    for x in texts:
+        if(counter == len(texts)-1):
+            text+=x
+        else:
+            text+=x + '\\n'
+        counter+=1
     openFile.close()
     return text
 
@@ -110,6 +129,7 @@ def writeModel(fileText, characterDictionary):
 def writeText(fileModel, hasil):
     filename = fileModel[:-4]
     file = open(f"{filename}.txt", 'w')
+    hasil = hasil.replace('\\n', '\n')
     file.writelines(hasil)
     file.close()
     print("done text")
@@ -132,6 +152,7 @@ def extract(fileModel, fileCode):
 
 
 extract("test.mod", "test.cod")
+# compress('test.txt')
 # print(readFile("test.cod"))
 
 

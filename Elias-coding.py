@@ -1,3 +1,5 @@
+import argparse
+
 def characterDivider(text):
     characterSet = ''.join(dict.fromkeys(text))
     # print(characterSet)
@@ -135,14 +137,14 @@ def writeText(fileModel, hasil):
     print("done text")
 
 
-def compress(fileText):
+def compress(fileText, bit=16):
     text = readFileText(fileText)
     characterDict = characterDivider(text)
     result = compressMethod(characterDict, text)
     writeCode(fileText, result, len(text))
     writeModel(fileText, characterDict)
 
-def extract(fileModel, fileCode):
+def extract(fileCode, fileModel):
     code = readFileCode(fileCode)
     characterDict = readFileModel(fileModel, code)
     
@@ -151,9 +153,24 @@ def extract(fileModel, fileCode):
     writeText(fileModel, hasil)
 
 
-extract("test.mod", "test.cod")
-# compress('test.txt')
-# print(readFile("test.cod"))
+parser = argparse.ArgumentParser(description='The program for Encoding and Decoding')
+parser.add_argument("-c", "--compress", help = "Compress a file")
+parser.add_argument("-e", "--extract", help = "Extract a file")
+parser.add_argument("-p", help = "Specify the bit size")
+parser.add_argument("-d", help = "Specify The Model")
+args = parser.parse_args()
+
+if args.compress != None:
+    if args.p != None:
+        compress(args.compress, args.p)
+    else:
+        compress(args.compress)
+elif args.extract != None:
+    if args.d != None:
+        extract(args.extract, args.d)
+    else:
+        raise ValueError('File Model Tidak Ditemukan')
+
 
 
 
